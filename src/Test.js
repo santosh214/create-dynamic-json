@@ -4,14 +4,17 @@ export default function Test() {
   const [key, setKey] = useState("");
   const [value, setValue] = useState("");
   const [createObj, setCreateObj] = useState({});
-  const [formValues, setFormValues] = useState([{ key: "", value : ""}])
-
+  // const [createArr, setCreateArr] = useState([]);
   const handleObj = (e) => {
     e.preventDefault();
     console.log("check");
     setCreateObj({ ...createObj, [key]: value });
     setKey("");
     setValue("");
+  };
+
+  const addArrayInKey = (e) => {
+    e.preventDefault();
   };
   const genreateJson = (e) => {
     const updatedJSON = createObj;
@@ -30,10 +33,10 @@ export default function Test() {
     <>
       <div className="container-fluid">
         <div className="row">
-          <div className="col-lg-6">
+          <div className="col-lg-12">
             <h3 className="text-center">Add Attributes</h3>
             {console.log("createjson", createObj)}
-            <form onSubmit={handleObj}>
+            <form>
               <br />
               <label htmlFor="Key">key</label>
               <input
@@ -48,11 +51,21 @@ export default function Test() {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
               />
-              <button type="submit">click</button>
+              <button
+                type="button"
+                onClick={handleObj}
+                className="mx-3 rounded"
+              >
+                Add
+              </button>
+
+              
             </form>
-            <button onClick={genreateJson}>generate json</button>
+            <button onClick={genreateJson} className="m-3">
+              generate json
+            </button>
           </div>
-          <div className="col-lg-6 ">
+          <div className="col-lg-12 ">
             <h4 className="text-center">Show Json</h4>
             {"{"}
             {Object.entries(createObj).map(([key, value], i) => {
