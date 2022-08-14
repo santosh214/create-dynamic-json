@@ -1,0 +1,64 @@
+{
+    "name": "gm groundhog #1",
+    "symbol": "",
+    "description": "1993 generative groundhogs spreading the GM vibe",
+    "seller_fee_basis_points": 600,
+    "image": "0.png",
+    "attributes": [
+        {
+            "trait_type": "Background",
+            "value": "Northern Lights"
+        },
+        {
+            "trait_type": "Fur",
+            "value": "Concrete"
+        },
+        {
+            "trait_type": "Mouth",
+            "value": "Surprise"
+        },
+        {
+            "trait_type": "Eyes",
+            "value": "Skeptical"
+        },
+        {
+            "trait_type": "Hands",
+            "value": "Camera"
+        },
+        {
+            "trait_type": "Head",
+            "value": "Sushi Chef"
+        },
+        {
+            "trait_type": "Eyewear",
+            "value": "Aviator"
+        },
+        {
+            "trait_type": "Hoodie Edition",
+            "value": "gmg"
+        }
+    ],
+    "collection": {
+        "name": "gm groundhogs",
+        "family": "GMG"
+    },
+    "properties": {
+        "files": [
+            {
+                "uri": "0.png",
+                "type": "image/png"
+            }
+        ],
+        "category": "image",
+        "creators": [
+            {
+                "address": "CYkCiA1a2sBTfXoK1gQQpMdLcFVW7veHy3WqPw5d8U97",
+                "share": 0
+            },
+            {
+                "address": "GruSFAjP7gtmJ9k3SBAiCrMXyUByGJKR885MhKWM9KJD",
+                "share": 100
+            }
+        ]
+    }
+}
