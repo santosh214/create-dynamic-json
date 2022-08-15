@@ -1,6 +1,7 @@
 import "./App.css";
 import { useState } from "react";
 import Test from "./Test";
+import path from "path";
 // import fs from "file-system";
 function App() {
   const [key, setKey] = useState("");
@@ -11,6 +12,8 @@ function App() {
   const [desc, setDesc] = useState("");
   const [sellerFee, setSellerFee] = useState(0);
   const [image, setImage] = useState("");
+  const [creatorAddr, setCreatorAddr] = useState("");
+  const [creatorShare, setCreatorShare] = useState("");
 
   const [attributes, setAttributes] = useState([]);
   const [traitType, setTraitType] = useState("");
@@ -19,24 +22,21 @@ function App() {
     name: "",
     family: "",
   });
+  const[propertyCategory,setPropertyCategory]=useState("")
+
+  const [creator, setCreator] = useState([{
+    "address":"CYkCiA1a2sBTfXoK1gQQpMdLcFVW7veHy3WqPw5d8U97",
+    "share":100
+  }]);
   const [properties, setProperties] = useState({
     files: [
       {
-        uri: "0.png",
-        type: "image.png",
+        uri: "default",
+        type: "image",
       },
     ],
-    category: "image",
-    creators: [
-      {
-        address: "CYkCiA1a2sBTfXoK1gQQpMdLcFVW7veHy3WqPw5d8U97",
-        share: 0,
-      },
-      {
-        address: "GruSFAjP7gtmJ9k3SBAiCrMXyUByGJKR885MhKWM9KJD",
-        share: 100,
-      },
-    ],
+    category: "default",
+    creators: creator,
   });
   const [finalObj, setFinalObj] = useState({});
   const handleObj = (e) => {
@@ -56,14 +56,26 @@ function App() {
     setTraitType("");
     setValue("");
   };
+  const handleCreator = (e) => {
+    e.preventDefault();
+    console.log("cretor", creatorAddr);
+    console.log("cretor share", creatorShare);
+    setCreator([...creator, { address: creatorAddr, share: creatorShare }]);
+    // console.log("attributes", attributes);
+    setProperties({...properties, creators: creator });
+
+    setCreatorAddr("");
+    setCreatorShare("");
+  };
   const handleForm = (e) => {
     e.preventDefault();
+
     // console.log("form", name, symbol, desc, sellerFee, image, attributes);
     const updatedJSON = {
       name: name,
       symbol: symbol,
       description: desc,
-      seller_fee_basis_points: sellerFee,
+      seller_fee_basis_points:  sellerFee,
       image: image,
       attributes: attributes,
       collection: collection,
@@ -87,22 +99,44 @@ function App() {
     handleSaveToPC(updatedJSON);
   };
 
-  const genreateJson = (e) => {
-    const updatedJSON = createObj;
-    const handleSaveToPC = (jsonData) => {
-      const fileData = JSON.stringify(jsonData);
-      const blob = new Blob([fileData], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.download = "filename.json";
-      link.href = url;
-      link.click();
-    };
-    handleSaveToPC(updatedJSON);
+
+  function returnTag(file_originalname) {
+    let tag;
+    // const ext = path.extname(file.originalname);
+    const ext = path.extname(file_originalname);
+
+    if (ext === ".png") {
+      tag = "image/png";
+    } else if (ext === ".jpeg") {
+      tag = "image/jpeg";
+    } else if (ext === ".jpg") {
+      tag = "image/jpg";
+    } else if (ext === ".json") {
+      tag = "application/json";
+    } else if (ext === ".mp4") {
+      tag = "video/mp4";
+    } else if (ext === ".gif") {
+      tag = "image/gif";
+    } else if (ext === ".mp3") {
+      tag = "audio/mpeg";
+    }
+    if (tag) {
+      let gettype = tag.split("/")[0];
+      console.log("get", gettype);
+      console.log("fileoriginal name",file_originalname)
+      setProperties({ ...properties, files: { type: tag,uri:file_originalname },category:gettype});
+    }
+
+    // return tag;
+  }
+
+  const setUri = (val) => {
+    console.log("uri", val);
+    // setProperties({ ...properties, files: { uri: val } });
   };
-  const checkObjects = () => {};
   return (
     <div className="p-3 container-fluid">
+      {console.log("checkkkkkk",properties)}
       <h3 className="pb-2">Create New NFT</h3>
       <form onSubmit={handleForm}>
         <div className="container-fluid ">
@@ -133,7 +167,6 @@ function App() {
                   id="exampleInputDesc"
                   aria-describedby="DescHelp"
                   placeholder="Description"
-
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                 />
@@ -148,7 +181,6 @@ function App() {
                   id="exampleInputSymbol"
                   aria-describedby="SymbolHelp"
                   placeholder="Symbol"
-
                   value={symbol}
                   onChange={(e) => setSymbol(e.target.value)}
                 />
@@ -165,7 +197,6 @@ function App() {
                   aria-describedby="SymbolHelp"
                   value={sellerFee}
                   placeholder="Seller Fee"
-
                   onChange={(e) => setSellerFee(e.target.value)}
                 />
               </div>
@@ -185,7 +216,6 @@ function App() {
               <label htmlFor="name" className="form-label fw-bold">
                 Attributes
               </label>
-              {console.log("attt", attributes)}
               {attributes.map((e) => {
                 return (
                   <div className="row ">
@@ -224,7 +254,6 @@ function App() {
                     aria-describedby="SymbolHelp"
                     value={value}
                     placeholder="Trait Value"
-
                     onChange={(e) => setValue(e.target.value)}
                   />
                 </div>
@@ -279,7 +308,6 @@ function App() {
                           id="exampleInputSymbol"
                           aria-describedby="SymbolHelp"
                           placeholder="Collection Family"
-
                           value={collection.family}
                           onChange={(e) =>
                             setCollection({
@@ -293,7 +321,122 @@ function App() {
                   </div>
                 </div>
               </div>
+              <div className="col">
+                <label htmlFor="key" className="form-label  fw-bold pt-2">
+                  Properties
+                </label>
+                <div className="col">
+                  <div className="row">
+                    <label htmlFor="key" className="form-label ">
+                      Files
+                    </label>
+                    <div className="col">
+                      <label htmlFor="key" className="form-label ">
+                        Uri
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="exampleInputSymbol"
+                        aria-describedby="SymbolHelp"
+                        placeholder="Key"
+                        // value={properties.files[0].uri}
+                        onChange={(e) => {
+                          returnTag(e.target.value);
+                        }}
+                      />
+                    </div>
+
+                    <div className="col">
+                      <label htmlFor="key" className="form-label ">
+                        Type
+                      </label>
+                      {/* {console.log("propsss",properties.files.type)} */}
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="exampleInputSymbol"
+                        aria-describedby="SymbolHelp"
+                        placeholder="Key"
+                        value={properties.files.type}
+                        disabled
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="col pt-3">
+                  <label htmlFor="name" className="form-label ">
+                    Creator
+                  </label>
+                  {creator.map((e) => {
+                    return (
+                      <div className="row ">
+                        {/* {console.log("check creator", e)} */}
+                        <div className="col-6 d-flex justify-content-center border p-2 rounded m-1">
+                          <span style={{
+                            overflow:'hidden'
+                          }}>{e.address} </span>
+                        </div>
+                        <div className="col d-flex justify-content-center border p-2 rounded m-1">
+                          <span>{e.share} </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div className="row ">
+                    <div className="col">
+                      <label htmlFor="name" className="form-label ">
+                        Address
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="exampleInputSymbol"
+                        aria-describedby="SymbolHelp"
+                        placeholder="Address"
+                        value={creatorAddr}
+                        onChange={(e) => setCreatorAddr(e.target.value)}
+                      />
+                    </div>
+                    <div className="col">
+                      <label htmlFor="name" className="form-label ">
+                        Share
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="exampleInputSymbol"
+                        aria-describedby="SymbolHelp"
+                        value={creatorShare}
+                        placeholder="Share"
+                        onChange={(e) => setCreatorShare(e.target.value)}
+                      />
+                    </div>
+                    <div className="col ">
+                      <div>
+                        <label htmlFor="name" className="form-label "></label>
+                      </div>
+
+                      <button
+                        className="btn btn-success mt-2"
+                        onClick={handleCreator}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col"></div>
               <h5 className="pt-4">Additional Attribute (if needed)</h5>
+              {Object.entries(createObj).map(([key, value], i) => {
+                return (
+                  <div key={i}>
+                    <span>"{key}" :</span>
+                    <span>"{value}" </span>
+                  </div>
+                );
+              })}
               <div className="row p-3 rounded border my-2 mx-1 ">
                 <div className="col ">
                   <label htmlFor="key" className="form-label ">
@@ -320,7 +463,6 @@ function App() {
                     className="form-control"
                     id="exampleInputSymbol"
                     placeholder="Value"
-
                     aria-describedby="SymbolHelp"
                     onChange={(e) => setValue2(e.target.value)}
                   />
