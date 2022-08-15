@@ -22,12 +22,13 @@ function App() {
     name: "",
     family: "",
   });
-  const[propertyCategory,setPropertyCategory]=useState("")
 
-  const [creator, setCreator] = useState([{
-    "address":"CYkCiA1a2sBTfXoK1gQQpMdLcFVW7veHy3WqPw5d8U97",
-    "share":100
-  }]);
+  const [creator, setCreator] = useState([
+    {
+      address: "CYkCiA1a2sBTfXoK1gQQpMdLcFVW7veHy3WqPw5d8U97",
+      share: 0,
+    },
+  ]);
   const [properties, setProperties] = useState({
     files: [
       {
@@ -51,7 +52,7 @@ function App() {
     e.preventDefault();
 
     console.log("check", traitType, value);
-    setAttributes([...attributes, { traitType: traitType, value: value }]);
+    setAttributes([...attributes, { trait_type: traitType, value: value }]);
     console.log("attributes", attributes);
     setTraitType("");
     setValue("");
@@ -60,9 +61,9 @@ function App() {
     e.preventDefault();
     console.log("cretor", creatorAddr);
     console.log("cretor share", creatorShare);
-    setCreator([...creator, { address: creatorAddr, share: creatorShare }]);
+    setCreator([...creator, { address: creatorAddr, share: Number (creatorShare )}]);
     // console.log("attributes", attributes);
-    setProperties({...properties, creators: creator });
+    setProperties({ ...properties, creators: creator });
 
     setCreatorAddr("");
     setCreatorShare("");
@@ -75,12 +76,18 @@ function App() {
       name: name,
       symbol: symbol,
       description: desc,
-      seller_fee_basis_points:  sellerFee,
+      seller_fee_basis_points:Number (sellerFee),
       image: image,
       attributes: attributes,
       collection: collection,
       properties: properties,
     };
+    //for nested conversion
+    // function replacer(key, value) {
+    //   if (key == "seller_fee_basis_points") return Number(value);
+    //   else if (key == "share") return Number(value);
+    //   else return value;
+    // }
 
     const handleSaveToPC = (jsonData) => {
       console.log("createObj", createObj);
@@ -98,7 +105,6 @@ function App() {
     };
     handleSaveToPC(updatedJSON);
   };
-
 
   function returnTag(file_originalname) {
     let tag;
@@ -123,8 +129,12 @@ function App() {
     if (tag) {
       let gettype = tag.split("/")[0];
       console.log("get", gettype);
-      console.log("fileoriginal name",file_originalname)
-      setProperties({ ...properties, files: { type: tag,uri:file_originalname },category:gettype});
+      console.log("fileoriginal name", file_originalname);
+      setProperties({
+        ...properties,
+        files: [{ uri: file_originalname, type: tag }],
+        category: gettype,
+      });
     }
 
     // return tag;
@@ -136,7 +146,7 @@ function App() {
   };
   return (
     <div className="p-3 container-fluid">
-      {console.log("checkkkkkk",properties)}
+      {console.log("checkkkkkk", properties)}
       <h3 className="pb-2">Create New NFT</h3>
       <form onSubmit={handleForm}>
         <div className="container-fluid ">
@@ -220,7 +230,7 @@ function App() {
                 return (
                   <div className="row ">
                     <div className="col d-flex justify-content-center border p-2 rounded m-1">
-                      <span>{e.traitType} </span>
+                      <span>{e.trait_type} </span>
                     </div>
                     <div className="col d-flex justify-content-center border p-2 rounded m-1">
                       <span>{e.value} </span>
@@ -351,14 +361,14 @@ function App() {
                       <label htmlFor="key" className="form-label ">
                         Type
                       </label>
-                      {/* {console.log("propsss",properties.files.type)} */}
+                      {console.log("propsss",properties.files[0].type)}
                       <input
                         type="text"
                         className="form-control"
                         id="exampleInputSymbol"
                         aria-describedby="SymbolHelp"
                         placeholder="Key"
-                        value={properties.files.type}
+                        value={properties.files[0].type}
                         disabled
                       />
                     </div>
@@ -373,9 +383,13 @@ function App() {
                       <div className="row ">
                         {/* {console.log("check creator", e)} */}
                         <div className="col-6 d-flex justify-content-center border p-2 rounded m-1">
-                          <span style={{
-                            overflow:'hidden'
-                          }}>{e.address} </span>
+                          <span
+                            style={{
+                              overflow: "hidden",
+                            }}
+                          >
+                            {e.address}{" "}
+                          </span>
                         </div>
                         <div className="col d-flex justify-content-center border p-2 rounded m-1">
                           <span>{e.share} </span>
